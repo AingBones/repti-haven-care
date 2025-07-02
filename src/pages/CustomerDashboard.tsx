@@ -5,11 +5,21 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, User, Phone, Mail, Home, Plus, Camera, Heart, Clock, CheckCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
+import { Calendar, User, Phone, Mail, Home, Plus, Camera, Heart, Clock, CheckCircle, Edit } from 'lucide-react';
 import { dummyPets, dummyBookings, dummyReports } from '@/data/dummyData';
 
 const CustomerDashboard = () => {
   const [selectedCustomer] = useState('owner1'); // Simulating logged in customer
+  const [profileData, setProfileData] = useState({
+    name: 'Sarah Johnson',
+    phone: '+62 812-1111-1111',
+    email: 'sarah.johnson@email.com',
+    address: 'Jl. Kebon Jeruk No. 123\nJakarta Barat, 11530'
+  });
   
   // Filter data for current customer
   const customerPets = dummyPets.filter(pet => pet.ownerId === selectedCustomer);
@@ -31,6 +41,27 @@ const CustomerDashboard = () => {
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'Confirmed': return 'Dikonfirmasi';
+      case 'In Care': return 'Dalam Perawatan';
+      case 'Completed': return 'Selesai';
+      case 'Pending': return 'Menunggu';
+      case 'Cancelled': return 'Dibatalkan';
+      default: return status;
+    }
+  };
+
+  const handleEditProfile = () => {
+    console.log('Data profil yang diperbarui:', profileData);
+    toast.success('Profil berhasil diperbarui!');
+  };
+
+  const handleAddPet = () => {
+    toast.info('Halaman tambah hewan peliharaan akan segera tersedia!');
+    console.log('Menambah hewan peliharaan baru');
+  };
+
   const currentCustomer = dummyPets.find(pet => pet.ownerId === selectedCustomer);
 
   return (
@@ -48,11 +79,11 @@ const CustomerDashboard = () => {
               </span>
             </Link>
             <div className="flex items-center space-x-4">
-              <span className="text-gray-600">Welcome back, {currentCustomer?.ownerName}!</span>
+              <span className="text-gray-600">Selamat datang kembali, {currentCustomer?.ownerName}!</span>
               <Link to="/booking">
                 <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
                   <Plus className="mr-2 h-4 w-4" />
-                  New Booking
+                  Pemesanan Baru
                 </Button>
               </Link>
             </div>
@@ -64,16 +95,16 @@ const CustomerDashboard = () => {
         {/* Dashboard Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-            Customer Dashboard
+            Dashboard Pelanggan
           </h1>
-          <p className="text-gray-600">Manage your reptile care bookings and track your pets</p>
+          <p className="text-gray-600">Kelola pemesanan perawatan reptil Anda dan pantau hewan peliharaan</p>
         </div>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="bg-white/80 backdrop-blur-sm border-emerald-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Total Pets</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600">Total Hewan</CardTitle>
               <Heart className="h-4 w-4 text-emerald-600" />
             </CardHeader>
             <CardContent>
@@ -83,7 +114,7 @@ const CustomerDashboard = () => {
           
           <Card className="bg-white/80 backdrop-blur-sm border-emerald-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Active Bookings</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600">Pemesanan Aktif</CardTitle>
               <Clock className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
@@ -93,7 +124,7 @@ const CustomerDashboard = () => {
           
           <Card className="bg-white/80 backdrop-blur-sm border-emerald-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Total Bookings</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600">Total Pemesanan</CardTitle>
               <Calendar className="h-4 w-4 text-purple-600" />
             </CardHeader>
             <CardContent>
@@ -103,7 +134,7 @@ const CustomerDashboard = () => {
           
           <Card className="bg-white/80 backdrop-blur-sm border-emerald-200">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">Completed</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600">Selesai</CardTitle>
               <CheckCircle className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
@@ -116,19 +147,19 @@ const CustomerDashboard = () => {
 
         <Tabs defaultValue="bookings" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3 bg-white/50 backdrop-blur-sm">
-            <TabsTrigger value="bookings">My Bookings</TabsTrigger>
-            <TabsTrigger value="pets">My Pets</TabsTrigger>
-            <TabsTrigger value="profile">Profile</TabsTrigger>
+            <TabsTrigger value="bookings">Pemesanan Saya</TabsTrigger>
+            <TabsTrigger value="pets">Hewan Peliharaan Saya</TabsTrigger>
+            <TabsTrigger value="profile">Profil</TabsTrigger>
           </TabsList>
 
           {/* Bookings Tab */}
           <TabsContent value="bookings" className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-800">My Bookings</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Pemesanan Saya</h2>
               <Link to="/booking">
                 <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
                   <Plus className="mr-2 h-4 w-4" />
-                  New Booking
+                  Pemesanan Baru
                 </Button>
               </Link>
             </div>
@@ -141,11 +172,11 @@ const CustomerDashboard = () => {
                       <div>
                         <CardTitle className="text-xl text-gray-800">{booking.petName}</CardTitle>
                         <CardDescription className="text-gray-600">
-                          Booking ID: {booking.id}
+                          ID Pemesanan: {booking.id}
                         </CardDescription>
                       </div>
                       <Badge className={getStatusColor(booking.status)}>
-                        {booking.status}
+                        {getStatusText(booking.status)}
                       </Badge>
                     </div>
                   </CardHeader>
@@ -161,7 +192,7 @@ const CustomerDashboard = () => {
                           <span>Check-out: {new Date(booking.checkOutDate).toLocaleDateString('id-ID')}</span>
                         </div>
                         <div className="flex items-center space-x-2 text-gray-600">
-                          <span className="font-semibold">Services:</span>
+                          <span className="font-semibold">Layanan:</span>
                           <span>{booking.services.join(', ')}</span>
                         </div>
                       </div>
@@ -183,10 +214,14 @@ const CustomerDashboard = () => {
           {/* Pets Tab */}
           <TabsContent value="pets" className="space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-gray-800">My Pets</h2>
-              <Button variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-50">
+              <h2 className="text-2xl font-bold text-gray-800">Hewan Peliharaan Saya</h2>
+              <Button 
+                variant="outline" 
+                className="border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                onClick={handleAddPet}
+              >
                 <Plus className="mr-2 h-4 w-4" />
-                Add Pet
+                Tambah Hewan
               </Button>
             </div>
             
@@ -203,26 +238,26 @@ const CustomerDashboard = () => {
                   <CardHeader>
                     <CardTitle className="text-xl text-gray-800">{pet.name}</CardTitle>
                     <CardDescription className="text-gray-600">
-                      {pet.species} • {pet.gender} • {pet.age} years old
+                      {pet.species} • {pet.gender} • {pet.age} tahun
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Breed:</span>
+                        <span className="text-gray-600">Ras:</span>
                         <span className="font-medium">{pet.breed}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Weight:</span>
+                        <span className="text-gray-600">Berat:</span>
                         <span className="font-medium">{pet.weight}g</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Color:</span>
+                        <span className="text-gray-600">Warna:</span>
                         <span className="font-medium">{pet.color}</span>
                       </div>
                     </div>
                     <div className="mt-4">
-                      <p className="text-xs text-gray-500 mb-2">Special Needs:</p>
+                      <p className="text-xs text-gray-500 mb-2">Kebutuhan Khusus:</p>
                       <div className="flex flex-wrap gap-1">
                         {pet.specialNeeds.slice(0, 2).map((need, index) => (
                           <Badge key={index} variant="secondary" className="text-xs">
@@ -231,7 +266,7 @@ const CustomerDashboard = () => {
                         ))}
                         {pet.specialNeeds.length > 2 && (
                           <Badge variant="secondary" className="text-xs">
-                            +{pet.specialNeeds.length - 2} more
+                            +{pet.specialNeeds.length - 2} lainnya
                           </Badge>
                         )}
                       </div>
@@ -244,12 +279,12 @@ const CustomerDashboard = () => {
 
           {/* Profile Tab */}
           <TabsContent value="profile" className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800">My Profile</h2>
+            <h2 className="text-2xl font-bold text-gray-800">Profil Saya</h2>
             
             <Card className="bg-white/80 backdrop-blur-sm border-emerald-200">
               <CardHeader>
-                <CardTitle className="text-xl text-gray-800">Customer Information</CardTitle>
-                <CardDescription>Your personal details and contact information</CardDescription>
+                <CardTitle className="text-xl text-gray-800">Informasi Pelanggan</CardTitle>
+                <CardDescription>Detail pribadi dan informasi kontak Anda</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-6">
@@ -257,22 +292,22 @@ const CustomerDashboard = () => {
                     <div className="flex items-center space-x-3">
                       <User className="h-5 w-5 text-emerald-600" />
                       <div>
-                        <p className="text-sm text-gray-600">Full Name</p>
-                        <p className="font-medium">{currentCustomer?.ownerName}</p>
+                        <p className="text-sm text-gray-600">Nama Lengkap</p>
+                        <p className="font-medium">{profileData.name}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Phone className="h-5 w-5 text-emerald-600" />
                       <div>
-                        <p className="text-sm text-gray-600">Phone Number</p>
-                        <p className="font-medium">{currentCustomer?.ownerPhone}</p>
+                        <p className="text-sm text-gray-600">Nomor Telepon</p>
+                        <p className="font-medium">{profileData.phone}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Mail className="h-5 w-5 text-emerald-600" />
                       <div>
-                        <p className="text-sm text-gray-600">Email Address</p>
-                        <p className="font-medium">sarah.johnson@email.com</p>
+                        <p className="text-sm text-gray-600">Alamat Email</p>
+                        <p className="font-medium">{profileData.email}</p>
                       </div>
                     </div>
                   </div>
@@ -280,23 +315,90 @@ const CustomerDashboard = () => {
                     <div className="flex items-center space-x-3">
                       <Home className="h-5 w-5 text-emerald-600" />
                       <div>
-                        <p className="text-sm text-gray-600">Address</p>
-                        <p className="font-medium">Jl. Kebon Jeruk No. 123<br />Jakarta Barat, 11530</p>
+                        <p className="text-sm text-gray-600">Alamat</p>
+                        <p className="font-medium">{profileData.address}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <Calendar className="h-5 w-5 text-emerald-600" />
                       <div>
-                        <p className="text-sm text-gray-600">Member Since</p>
-                        <p className="font-medium">January 2024</p>
+                        <p className="text-sm text-gray-600">Anggota Sejak</p>
+                        <p className="font-medium">Januari 2024</p>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="pt-4 border-t border-emerald-200">
-                  <Button variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-50">
-                    Edit Profile
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-50">
+                        <Edit className="mr-2 h-4 w-4" />
+                        Edit Profil
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Edit Profil</DialogTitle>
+                        <DialogDescription>
+                          Perbarui informasi profil Anda di sini
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="name">Nama Lengkap</Label>
+                          <Input 
+                            id="name"
+                            value={profileData.name}
+                            onChange={(e) => setProfileData({
+                              ...profileData,
+                              name: e.target.value
+                            })}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="phone">Nomor Telepon</Label>
+                          <Input 
+                            id="phone"
+                            value={profileData.phone}
+                            onChange={(e) => setProfileData({
+                              ...profileData,
+                              phone: e.target.value
+                            })}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="email">Alamat Email</Label>
+                          <Input 
+                            id="email"
+                            type="email"
+                            value={profileData.email}
+                            onChange={(e) => setProfileData({
+                              ...profileData,
+                              email: e.target.value
+                            })}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="address">Alamat</Label>
+                          <textarea 
+                            id="address"
+                            className="w-full p-2 border rounded-md"
+                            rows={3}
+                            value={profileData.address}
+                            onChange={(e) => setProfileData({
+                              ...profileData,
+                              address: e.target.value
+                            })}
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button onClick={handleEditProfile} className="bg-emerald-600 hover:bg-emerald-700">
+                          Simpan Perubahan
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               </CardContent>
             </Card>
