@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
@@ -8,13 +7,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { Download, FileText, FileSpreadsheet, FileImage } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
+import { DateRange } from 'react-day-picker';
 
 const ExportDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [exportConfig, setExportConfig] = useState({
     type: 'bookings',
     format: 'csv',
-    dateRange: { from: undefined, to: undefined },
+    dateRange: undefined as DateRange | undefined,
     includeColumns: {
       id: true,
       petName: true,
@@ -195,7 +195,7 @@ const ExportDialog = () => {
               <p>Jenis: {dataTypes.find(t => t.value === exportConfig.type)?.label}</p>
               <p>Format: {formatOptions.find(f => f.value === exportConfig.format)?.label}</p>
               <p>Kolom: {Object.values(exportConfig.includeColumns).filter(Boolean).length} kolom dipilih</p>
-              {exportConfig.dateRange.from && exportConfig.dateRange.to && (
+              {exportConfig.dateRange?.from && exportConfig.dateRange?.to && (
                 <p>
                   Periode: {exportConfig.dateRange.from.toLocaleDateString('id-ID')} - {exportConfig.dateRange.to.toLocaleDateString('id-ID')}
                 </p>

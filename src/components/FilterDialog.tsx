@@ -9,6 +9,7 @@ import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { Badge } from '@/components/ui/badge';
 import { X, Filter } from 'lucide-react';
 import { toast } from '@/components/ui/sonner';
+import { DateRange } from 'react-day-picker';
 
 interface FilterDialogProps {
   onApplyFilter: (filters: any) => void;
@@ -17,7 +18,7 @@ interface FilterDialogProps {
 const FilterDialog = ({ onApplyFilter }: FilterDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [filters, setFilters] = useState({
-    dateRange: { from: undefined, to: undefined },
+    dateRange: undefined as DateRange | undefined,
     status: '',
     petType: '',
     ownerName: '',
@@ -35,7 +36,7 @@ const FilterDialog = ({ onApplyFilter }: FilterDialogProps) => {
 
   const handleClearFilters = () => {
     setFilters({
-      dateRange: { from: undefined, to: undefined },
+      dateRange: undefined,
       status: '',
       petType: '',
       ownerName: '',
