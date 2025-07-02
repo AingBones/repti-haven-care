@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,9 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from 'sonner';
-import { Calendar, User, Phone, Mail, Home, Plus, Camera, Heart, Clock, CheckCircle, Edit } from 'lucide-react';
-import { dummyPets, dummyBookings, dummyReports } from '@/data/dummyData';
+import { toast } from '@/components/ui/sonner';
+import { Calendar, User, Phone, Mail, Home, Plus, Heart, Clock, CheckCircle, Edit } from 'lucide-react';
+import { dummyPets, dummyBookings } from '@/data/dummyData';
 
 const CustomerDashboard = () => {
   const [selectedCustomer] = useState('owner1'); // Simulating logged in customer
