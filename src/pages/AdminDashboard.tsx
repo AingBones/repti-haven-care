@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,17 +8,21 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/sonner';
 import { 
   Calendar, Users, DollarSign, TrendingUp, Heart, Clock, 
   CheckCircle, AlertCircle, Home, Phone, Camera, Settings,
   Thermometer, Activity, Utensils, Droplets, FileText, Eye
 } from 'lucide-react';
 import { dummyPets, dummyBookings, dashboardStats } from '@/data/dummyData';
+import AdminSettings from '@/components/AdminSettings';
+import FilterDialog from '@/components/FilterDialog';
+import ExportDialog from '@/components/ExportDialog';
 
 const AdminDashboard = () => {
   const [selectedTab, setSelectedTab] = useState('overview');
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [filteredBookings, setFilteredBookings] = useState(dummyBookings);
   const [healthCheckData, setHealthCheckData] = useState({
     temperature: '',
     activity: 'Normal',
@@ -45,14 +48,14 @@ const AdminDashboard = () => {
   };
 
   const getPriorityBookings = () => {
-    return dummyBookings
+    return filteredBookings
       .filter(booking => booking.status === 'Pending' || booking.status === 'Confirmed')
       .sort((a, b) => new Date(a.checkInDate).getTime() - new Date(b.checkInDate).getTime())
       .slice(0, 5);
   };
 
   const getPetsInCare = () => {
-    return dummyBookings
+    return filteredBookings
       .filter(booking => booking.status === 'In Care')
       .map(booking => ({
         ...booking,
@@ -86,9 +89,22 @@ const AdminDashboard = () => {
     setSelectedBooking(booking);
   };
 
-  const handleSettings = () => {
-    toast.info('Halaman pengaturan akan segera tersedia!');
-    console.log('Membuka pengaturan admin');
+  const handleApplyFilter = (filters: any) => {
+    console.log('Filter diterapkan:', filters);
+    // Apply filters to bookings data
+    let filtered = [...dummyBookings];
+    
+    if (filters.status) {
+      filtered = filtered.filter(booking => booking.status.toLowerCase().includes(filters.status));
+    }
+    
+    if (filters.ownerName) {
+      filtered = filtered.filter(booking => 
+        booking.ownerName.toLowerCase().includes(filters.ownerName.toLowerCase())
+      );
+    }
+    
+    setFilteredBookings(filtered);
   };
 
   return (
@@ -107,14 +123,6 @@ const AdminDashboard = () => {
             </Link>
             <div className="flex items-center space-x-4">
               <span className="text-gray-600">Selamat datang, Dr. Amanda</span>
-              <Button 
-                variant="outline" 
-                className="border-emerald-300 text-emerald-700 hover:bg-emerald-50"
-                onClick={handleSettings}
-              >
-                <Settings className="mr-2 h-4 w-4" />
-                Pengaturan
-              </Button>
             </div>
           </div>
         </div>
@@ -130,11 +138,12 @@ const AdminDashboard = () => {
         </div>
 
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-white/50 backdrop-blur-sm">
+          <TabsList className="grid w-full grid-cols-5 bg-white/50 backdrop-blur-sm">
             <TabsTrigger value="overview">Ringkasan</TabsTrigger>
             <TabsTrigger value="bookings">Pemesanan</TabsTrigger>
             <TabsTrigger value="pets">Hewan dalam Perawatan</TabsTrigger>
             <TabsTrigger value="reports">Laporan</TabsTrigger>
+            <TabsTrigger value="settings">Pengaturan</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -261,17 +270,13 @@ const AdminDashboard = () => {
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-800">Semua Pemesanan</h2>
               <div className="flex space-x-2">
-                <Button variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-50">
-                  Filter
-                </Button>
-                <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700">
-                  Ekspor Data
-                </Button>
+                <FilterDialog onApplyFilter={handleApplyFilter} />
+                <ExportDialog />
               </div>
             </div>
             
             <div className="grid gap-4">
-              {dummyBookings.map((booking) => (
+              {filteredBookings.map((booking) => (
                 <Card key={booking.id} className="bg-white/80 backdrop-blur-sm border-emerald-200 hover:shadow-lg transition-all duration-300">
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
@@ -729,6 +734,11 @@ const AdminDashboard = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Settings Tab */}
+          <TabsContent value="settings">
+            <AdminSettings />
           </TabsContent>
         </Tabs>
       </div>

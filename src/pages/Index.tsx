@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Shield, Heart, Star, Calendar, Phone, Mail } from 'lucide-react';
+import { Users, Shield, Heart, Star, Calendar, Phone, Mail, ArrowRight } from 'lucide-react';
 
 const Index = () => {
   const features = [
@@ -92,9 +92,12 @@ const Index = () => {
                   Booking Sekarang
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="border-2 border-emerald-300 text-emerald-700 hover:bg-emerald-50 text-lg px-8 py-6 rounded-xl">
-                Pelajari Lebih Lanjut
-              </Button>
+              <Link to="/learn-more">
+                <Button size="lg" variant="outline" className="border-2 border-emerald-300 text-emerald-700 hover:bg-emerald-50 text-lg px-8 py-6 rounded-xl">
+                  <ArrowRight className="mr-2 h-5 w-5" />
+                  Pelajari Lebih Lanjut
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
